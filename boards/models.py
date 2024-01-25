@@ -47,6 +47,13 @@ def create_dashboard_archive(sender, instance, created, **kwargs):
         sender.dashboard_archive = created_archive
 
 
+@receiver(post_save, sender=Dashboard)
+def create_marks(sender, instance, created, **kwargs):
+    if created:
+        created_marks = Marks.objects.create(dashboard=instance)
+        sender.marks = created_marks
+
+
 class Column(models.Model):
     id = models.UUIDField(
         primary_key=True,
@@ -62,6 +69,8 @@ class Marks(models.Model):
         primary_key=True,
         default=uuid.uuid4,
         editable=False)
+    dashboard = models.OneToOneField(Dashboard, null=True, blank=True, on_delete=models.CASCADE,
+                                     related_name='dashboard_marks')
     font_color = models.CharField(default="#000")
     color = models.CharField(blank=True, null=True)
     mark_text = models.CharField(blank=True, null=True)
@@ -73,7 +82,7 @@ class Card(models.Model):
         default=uuid.uuid4,
         editable=False)
     column = models.ForeignKey(Column, on_delete=models.CASCADE, related_name='cards')
-    position = models.IntegerField(unique=True, blank=True, null=True)
+    position = models.IntegerField(blank=True, null=True)
     info = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     status = models.CharField(blank=True, null=True)
@@ -102,5 +111,6 @@ class SubTasks(models.Model):
         default=uuid.uuid4,
         editable=False)
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='sub_tasks')
+    title = models.TextField(default="", blank=True, null=True)
     status = models.BooleanField(default=False)
     deadline = models.DateTimeField(blank=True, null=True)
