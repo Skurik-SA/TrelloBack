@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.response import Response
 
 from boards.models import Dashboard, DashboardArchive, Column, Marks, Card, Task, SubTasks
 from users.models import CustomUser
@@ -10,9 +11,6 @@ class DashboardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dashboard
         fields = '__all__'
-        # model = Dashboard
-        # fields = ['id', 'owner', 'title', 'description', 'is_private', 'is_favourite', 'users_can_edit',
-        #           'users_can_view', 'users_can_comment']
 
     def create(self, validated_data):
         owner_id = validated_data.pop('owner')
@@ -50,7 +48,7 @@ class ColumnSerializer(serializers.ModelSerializer):
 class MarksSerializer(serializers.ModelSerializer):
     class Meta:
         model = Marks
-        fields = ['id', 'font_color', 'color', 'mark_text']
+        fields = ['id', 'dashboard', 'marks']
 
 
 class CardSerializer(serializers.ModelSerializer):

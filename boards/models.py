@@ -1,6 +1,6 @@
 import uuid
 
-from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -71,9 +71,17 @@ class Marks(models.Model):
         editable=False)
     dashboard = models.OneToOneField(Dashboard, null=True, blank=True, on_delete=models.CASCADE,
                                      related_name='dashboard_marks')
-    font_color = models.CharField(default="#000")
+
+
+class Mark(models.Model):
+    # id = models.UUIDField(
+    #     primary_key=True,
+    #     default=uuid.uuid4,
+    #     editable=False)
+    font_color = models.CharField(default="#000000")
     color = models.CharField(blank=True, null=True)
-    mark_text = models.CharField(blank=True, null=True)
+    mark_text = models.CharField(max_length=255, blank=True, null=True)
+    parent_marks = models.ForeignKey(Marks, related_name='my_marks', on_delete=models.CASCADE)
 
 
 class Card(models.Model):

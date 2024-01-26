@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from boards.models import Dashboard, DashboardArchive, Column, Card, Task, SubTasks, Marks
+from boards.models import Dashboard, DashboardArchive, Column, Card, Task, SubTasks, Marks, Mark
 
 
 # Register your models here.
@@ -20,9 +20,14 @@ class MarksInline(admin.StackedInline):
     can_delete = False
 
 
+class MarkInline(admin.StackedInline):
+    model = Mark
+    can_delete = True
+
+
 @admin.register(Dashboard)
 class DashboardAdmin(admin.ModelAdmin):
-    inlines = (DashboardArchiveInline, ColumnsInline)
+    inlines = (DashboardArchiveInline, ColumnsInline, MarksInline)
     list_display = ('id', 'title', 'owner', 'is_private', 'is_favourite')
     list_filter = ('owner', 'is_private', 'is_favourite')
     search_fields = ('title', 'description')
@@ -37,6 +42,14 @@ class DashboardArchiveAdmin(admin.ModelAdmin):
 
 @admin.register(Marks)
 class MarksAdmin(admin.ModelAdmin):
+    inlines = (MarkInline, )
+    list_display = ('id',)
+    list_filter = ['id']
+    search_fields = ['id']
+
+
+@admin.register(Mark)
+class MarkAdmin(admin.ModelAdmin):
     list_display = ('id', 'font_color', 'color', 'mark_text')
     list_filter = ['id']
     search_fields = ['id']
